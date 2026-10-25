@@ -65,7 +65,7 @@ export const update = async (req, res) => {
 };  
 
    
-/*
+
 
 // Delete a user by ID
 export const deleteUser = async (req, res) => {
@@ -78,4 +78,4 @@ export const deleteUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};  */
+};  

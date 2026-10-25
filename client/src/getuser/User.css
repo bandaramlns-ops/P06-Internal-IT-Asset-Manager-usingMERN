@@ -1,0 +1,37 @@
+.userTable {
+    width: 60%;
+    margin: 50px auto;
+    background-color: #f2f2f2;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+}
+
+.userTable h2 {
+    width: 100%;
+    margin-top: 30px;
+}
+.userTable button {
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #1714e6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.userTable Table th {
+    background-color:darkcyan;
+    color: white;
+
+}
+
+.userTable Table tbody td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #f2f2f2;
+    color: black;
+}
