@@ -1,25 +1,31 @@
+
 import './App.css';
+
+import {
+  createBrowserRouter,
+  RouterProvider
+} from 'react-router-dom';
+
 import User from './getuser/User';
-import AddUser from './adduser/adduser';
-import createBrowserRouter, { RouterProvider } from 'react-router-dom';
+import UserForm from './userform/userform';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <User />,
+  },
+  {
+    path: '/adduser',
+    element: <UserForm />,
+  },
+  {
+    path: '/updateuser/:id',
+    element: <UserForm />,
+  },
+]);
 
 function App() {
-  const route = createBrowserRouter([
-    {
-      path: '/',
-
-      element: <User />,
-    },  
-    {
-      path: '/adduser',
-      element: <AddUser />, 
-    }
-  ]);
-  return (
-    <div className="App">
-      <RouterProvider router={route} /> 
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

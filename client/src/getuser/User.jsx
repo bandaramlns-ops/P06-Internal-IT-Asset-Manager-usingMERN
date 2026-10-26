@@ -1,216 +1,212 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getUsers, deleteUser } from '../api';
 import './User.css';
 
 function User() {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: 'John Smith',
-      email: 'john@gmail.com',
-      address: 'Canada',
-    },
-    {
-      id: 2,
-      name: 'Sarah Wilson',
-      email: 'sarah@gmail.com',
-      address: 'London',
-    },
-    {
-      id: 3,
-      name: 'Michael Chen',
-      email: 'michael@gmail.com',
-      address: 'Singapore',
-    },
-  ]);
-
+  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
-  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
+  async function loadUsers() {
+    try {
+      setLoading(true);
+      setError('');
 
-  function addUser(event) {
-    event.preventDefault();
-
-    const newUser = {
-      id: Date.now(),
-      name: name,
-      email: email,
-      address: address,
-    };
-
-    setUsers([...users, newUser]);
-
-    setName('');
-    setEmail('');
-    setAddress('');
-    setShowForm(false);
+      const data = await getUsers();
+      setUsers(data);
+    } catch (err) {
+      setError(err.message || 'Unable to load users.');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function deleteUser(id) {
-    const confirmDelete = window.confirm(
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  async function handleDelete(id) {
+    const confirmed = window.confirm(
       'Are you sure you want to delete this user?'
     );
 
-    if (confirmDelete) {
-      setUsers(users.filter((user) => user.id !== id));
+    if (!confirmed) return;
+
+    try {
+      await deleteUser(id);
+
+      setUsers((previousUsers) =>
+        previousUsers.filter((user) => (user._id || user.id) !== id)
+      );
+    } catch (err) {
+      setError(err.message || 'Unable to delete user.');
     }
   }
 
   const filteredUsers = users.filter((user) =>
-    (user.name + ' ' + user.email)
+    `${user.name || ''} ${user.email || ''} ${user.address || ''}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
   return (
-    <div className="users-page">
-      <div className="users-header">
-        <div>
-          <p className="users-label">USER MANAGEMENT</p>
-          <h1>Our Users</h1>
-          <p className="users-description">
-            Manage your team members in one place.
-          </p>
-        </div>
+    <main className="users-page">
+      <nav className="topbar">
+        <Link to="/" className="brand">
+          <span className="brand-icon">U</span>
+          <span>Manage<span className="brand-light">Hub</span></span>
+        </Link>
 
-        <button
-          className="add-button"
-          onClick={() => setShowForm(!showForm)}
-        >
-          + Add User
-        </button>
-      </div>
+        <span className="topbar-label">USER MANAGEMENT</span>
+      </nav>
 
-      <div className="users-summary">
-        <div className="summary-icon">♙</div>
-        <div>
-          <p>Total Users</p>
-          <h2>{users.length}</h2>
-        </div>
-      </div>
+      <section className="users-content">
+        <header className="page-heading">
+          <div>
+            <p className="eyebrow">WORKSPACE / USERS</p>
+            <h1>User Directory</h1>
+            <p className="page-description">
+              Manage your users and keep their information up to date.
+            </p>
+          </div>
 
-      {showForm && (
-        <form className="user-form" onSubmit={addUser}>
-          <h2>Add New User</h2>
+          <Link to="/adduser" className="primary-button">
+            <span>＋</span> Add New User
+          </Link>
+        </header>
 
-          <input
-            type="text"
-            placeholder="Full name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            required
-          />
+        <section className="stats-grid">
+          <article className="stat-card">
+            <div>
+              <p>Total Users</p>
+              <h2>{users.length}</h2>
+              <span className="stat-note">Registered accounts</span>
+            </div>
+            <span className="stat-icon purple">♙</span>
+          </article>
 
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
+          <article className="stat-card">
+            <div>
+              <p>Search Results</p>
+              <h2>{filteredUsers.length}</h2>
+              <span className="stat-note">Matching your search</span>
+            </div>
+            <span className="stat-icon blue">⌕</span>
+          </article>
+        </section>
 
-          <input
-            type="text"
-            placeholder="Address"
-            value={address}
-            onChange={(event) => setAddress(event.target.value)}
-            required
-          />
-
-          <div className="form-buttons">
-            <button type="submit" className="add-button">
-              Save User
-            </button>
+        <section className="directory-card">
+          <div className="directory-heading">
+            <div>
+              <h2>All Users</h2>
+              <p>View and manage registered users.</p>
+            </div>
 
             <button
-              type="button"
-              className="cancel-button"
-              onClick={() => setShowForm(false)}
+              className="refresh-button"
+              onClick={loadUsers}
+              disabled={loading}
             >
-              Cancel
+              ↻ Refresh
             </button>
           </div>
-        </form>
-      )}
 
-      <div className="users-card">
-        <div className="table-header">
-          <div>
-            <h2>User Directory</h2>
-            <p>View and manage your users.</p>
+          <div className="search-bar">
+            <span>⌕</span>
+            <input
+              type="search"
+              placeholder="Search by name, email or address..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
           </div>
 
-          <input
-            className="search-input"
-            type="search"
-            placeholder="Search users..."
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
+          {error && (
+            <div className="message error-message">
+              {error}
+            </div>
+          )}
 
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>USER</th>
-                <th>EMAIL</th>
-                <th>ADDRESS</th>
-                <th>ACTION</th>
-              </tr>
-            </thead>
+          {loading ? (
+            <div className="empty-state">Loading users...</div>
+          ) : (
+            <div className="table-container">
+              <table className="users-table">
+                <thead>
+                  <tr>
+                    <th>USER</th>
+                    <th>EMAIL ADDRESS</th>
+                    <th>ADDRESS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
 
-            <tbody>
-              {filteredUsers.map((user, index) => (
-                <tr key={user.id}>
-                  <td>
-                    <div className="user-info">
-                      <div className={`user-avatar avatar-${index % 4}`}>
-                        {user.name.charAt(0).toUpperCase()}
-                      </div>
+                <tbody>
+                  {filteredUsers.map((user) => {
+                    const id = user._id || user.id;
 
-                      <strong>{user.name}</strong>
-                    </div>
-                  </td>
+                    return (
+                      <tr key={id}>
+                        <td>
+                          <div className="user-profile">
+                            <span className="user-avatar">
+                              {(user.name || '?')
+                                .charAt(0)
+                                .toUpperCase()}
+                            </span>
 
-                  <td>{user.email}</td>
-                  <td>{user.address}</td>
+                            <span className="user-fullname">
+                              {user.name}
+                            </span>
+                          </div>
+                        </td>
 
-                  <td>
-                    <button
-                      className="delete-button"
-                      onClick={() => deleteUser(user.id)}
-                      aria-label={`Delete ${user.name}`}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                        <td>{user.email}</td>
+                        <td>{user.address}</td>
 
-              {filteredUsers.length === 0 && (
-                <tr>
-                  <td colSpan="4" className="empty-message">
-                    No users found.
-                  </td>
-                </tr>
+                        <td>
+                          <div className="action-buttons">
+                            <Link
+                              to={`/updateuser/${id}`}
+                              className="edit-button"
+                            >
+                              Edit
+                            </Link>
+
+                            <button
+                              className="remove-button"
+                              onClick={() => handleDelete(id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              {!filteredUsers.length && (
+                <div className="empty-state">
+                  {search
+                    ? 'No users match your search.'
+                    : 'No users yet. Add your first user to get started.'}
+                </div>
               )}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          )}
 
-        <div className="table-footer">
-          Showing {filteredUsers.length} of {users.length} users
-        </div>
-      </div>
-
-      <p className="page-footer">
-        Made with care · Internal IT Asset Manager
-      </p>
-    </div>
+          <footer className="directory-footer">
+            Showing {filteredUsers.length} of {users.length} users
+            <span>ManageHub · User Directory</span>
+          </footer>
+        </section>
+      </section>
+    </main>
   );
 }
 
