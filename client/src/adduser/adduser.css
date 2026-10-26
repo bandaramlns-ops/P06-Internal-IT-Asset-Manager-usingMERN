@@ -1,0 +1,133 @@
+
+.add-user-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f6f7fc;
+  font-family: Arial, sans-serif;
+}
+
+.add-user-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 35px;
+  border: 1px solid #eceaf5;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 35px #29294310;
+}
+
+.back-link {
+  color: #7555e8;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.add-user-icon {
+  width: 48px;
+  height: 48px;
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #eee9ff;
+  color: #7555e8;
+  font-size: 30px;
+}
+
+.add-user-card h1 {
+  margin: 22px 0 8px;
+  color: #292943;
+  font-size: 27px;
+}
+
+.add-user-description {
+  margin-bottom: 28px;
+  color: #88889f;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.add-user-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-user-card label {
+  margin-bottom: 8px;
+  color: #44445b;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.add-user-card input {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 13px;
+  border: 1px solid #e3e3ee;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #292943;
+  font-size: 13px;
+}
+
+.add-user-card input:focus {
+  border-color: #7555e8;
+  box-shadow: 0 0 0 3px #7555e815;
+}
+
+.add-user-card input::placeholder {
+  color: #aaaabd;
+}
+
+.save-user-button {
+  margin-top: 5px;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #7555e8;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-user-button:hover {
+  background: #5e3dd0;
+}
+
+.success-message {
+  padding: 12px;
+  border-radius: 8px;
+  background: #e8f8ef;
+  color: #258653;
+  font-size: 13px;
+}
+
+.add-user-footer {
+  margin: 25px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid #eeeef5;
+  color: #a0a0b2;
+  font-size: 11px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .add-user-card {
+    padding: 24px;
+  }
+
+  .add-user-card h1 {
+    font-size: 24px;
+  }
+}
